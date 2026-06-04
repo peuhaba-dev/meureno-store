@@ -5,6 +5,26 @@ import { MessageCircle, ArrowLeft, Shield, HardDrive, Monitor, Cpu } from "lucid
 
 export const revalidate = 60;
 
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  try {
+    const product = await getProduct(slug);
+    const primaryImage = product.images?.find((i: { isPrimary: boolean }) => i.isPrimary) || product.images?.[0];
+    return {
+      title: product.name,
+      description: `${product.name} — ${product.processor || ""} RAM ${product.ramGb}GB SSD ${product.storageGb}GB. Harga: ${formatPrice(product.price)}. Laptop bekas berkualitas di Meureno Tech Store.`,
+      openGraph: {
+        title: product.name,
+        description: `Beli ${product.name} harga terjangkau di Meureno Tech Store Aceh.`,
+        images: primaryImage ? [{ url: primaryImage.url }] : [],
+        type: "website",
+      },
+    };
+  } catch {
+    return { title: "Produk tidak ditemukan" };
+  }
+}
+
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
