@@ -67,7 +67,7 @@ export function formatPrice(price: string | number): string {
 }
 
 export function getWhatsAppLink(product: Product): string {
-  const phone = "6282272788889"; // ganti dengan nomor WA kamu
+  const phone = "628984125987";
   const text = encodeURIComponent(
     `Halo, saya tertarik dengan ${product.name} seharga ${formatPrice(product.price)}. Apakah masih tersedia?`
   );
