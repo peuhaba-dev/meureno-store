@@ -17,7 +17,7 @@ export default async function HomePage() {
             <span className="font-bold text-gray-900 text-lg">Meureno Tech Store</span>
           </div>
           <a
-            href="https://wa.me/6282272788889"
+            href="https://wa.me/628984125987"
             target="_blank"
             rel="noopener noreferrer"
             className="text-sm bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl font-medium transition-colors"
