@@ -16,6 +16,52 @@ export default async function HomePage() {
 
       <HeroSection total={total} />
 
+
+      {/* Trust Section */}
+      <section className="bg-[#0d0f1a] border-y border-white/5">
+        
+        {/* Stats counter */}
+        <div className="max-w-5xl mx-auto px-4 py-10 grid grid-cols-2 md:grid-cols-4 gap-6">
+          {[
+            { value: "50+", label: "Laptop Terjual", icon: "🏆" },
+            { value: "100%", label: "Grade A Certified", icon: "✅" },
+            { value: "1 Tahun", label: "Garansi SSD", icon: "🛡️" },
+            { value: "Fast", label: "Respon WhatsApp", icon: "⚡" },
+          ].map(({ value, label, icon }) => (
+            <div key={label} className="text-center">
+              <div className="text-2xl mb-1">{icon}</div>
+              <div className="text-2xl font-black text-white mb-0.5">{value}</div>
+              <div className="text-xs text-gray-500 font-medium">{label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="border-t border-white/5" />
+
+        {/* Kenapa Meureno */}
+        <div className="max-w-5xl mx-auto px-4 py-10">
+          <h2 className="text-center text-lg font-black text-white mb-8">
+            Kenapa Pilih <span className="text-blue-400">Meureno Tech Store?</span>
+          </h2>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { icon: "🔬", title: "Unit Di-test", desc: "Setiap unit dicek & ditest sebelum dijual" },
+              { icon: "🛡️", title: "Garansi Resmi", desc: "Garansi unit 1 bulan, SSD 1 tahun" },
+              { icon: "🚀", title: "Siap Pakai", desc: "Instalasi Windows & driver lengkap" },
+              { icon: "📦", title: "Kirim Seluruh Aceh", desc: "Pengiriman aman ke seluruh wilayah Aceh" },
+            ].map(({ icon, title, desc }) => (
+              <div key={title} className="bg-white/[0.03] hover:bg-white/[0.06] border border-white/5 hover:border-blue-500/20 rounded-2xl p-4 text-center transition-all duration-200 group">
+                <div className="text-3xl mb-3">{icon}</div>
+                <h3 className="text-sm font-bold text-white mb-1.5 group-hover:text-blue-300 transition-colors">{title}</h3>
+                <p className="text-xs text-gray-500 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </section>
+
       <CatalogClient products={products} total={total} />
 
       {/* Footer */}
