@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
+import SkeletonCard from "@/components/SkeletonCard";
 import { Laptop, ArrowUpDown } from "lucide-react";
 import type { Product } from "@/lib/api";
 
@@ -10,6 +11,11 @@ type SortOption = "terbaru" | "harga-asc" | "harga-desc";
 export default function CatalogClient({ products, total }: { products: Product[]; total: number }) {
   const [activeBrand, setActiveBrand] = useState("Semua");
   const [sort, setSort] = useState<SortOption>("terbaru");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const brands = useMemo(() => {
     const set = new Set(products.map((p) => p.brand));
@@ -18,11 +24,9 @@ export default function CatalogClient({ products, total }: { products: Product[]
 
   const filtered = useMemo(() => {
     let list = activeBrand === "Semua" ? products : products.filter((p) => p.brand === activeBrand);
-
     if (sort === "harga-asc") list = [...list].sort((a, b) => Number(a.price) - Number(b.price));
     else if (sort === "harga-desc") list = [...list].sort((a, b) => Number(b.price) - Number(a.price));
     else list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-
     return list;
   }, [products, activeBrand, sort]);
 
@@ -79,7 +83,13 @@ export default function CatalogClient({ products, total }: { products: Product[]
         ))}
       </div>
 
-      {filtered.length === 0 ? (
+      {!mounted ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
         <div className="text-center py-20 text-gray-300">
           <Laptop size={48} className="mx-auto mb-4" />
           <p className="text-gray-400">Tidak ada produk untuk brand ini.</p>
