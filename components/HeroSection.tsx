@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Shield, Star, Wrench, ChevronLeft, ChevronRight } from "lucide-react";
 
 const CMS_API = "https://cms.meureno.com";
+const SLIDE_INTERVAL = 4000;
+const RESUME_DELAY = 8000;
 
 function useCountUp(target: number, duration: number = 1500, start: boolean = false) {
   const [count, setCount] = useState(0);
@@ -24,8 +26,9 @@ function useCountUp(target: number, duration: number = 1500, start: boolean = fa
 export default function HeroSection({ total }: { total: number }) {
   const [visible, setVisible] = useState(false);
   const [active, setActive] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [banners, setBanners] = useState<string[]>([]);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const resumeRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 100);
@@ -42,27 +45,52 @@ export default function HeroSection({ total }: { total: number }) {
       .catch(() => setBanners([]));
   }, []);
 
+  const startInterval = (currentBanners: string[]) => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (currentBanners.length <= 1) return;
+    intervalRef.current = setInterval(() => {
+      setActive(i => (i + 1) % currentBanners.length);
+    }, SLIDE_INTERVAL);
+  };
+
   useEffect(() => {
-    if (paused || banners.length <= 1) return;
-    const interval = setInterval(() => {
-      setActive((i) => (i + 1) % banners.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, [paused, banners.length]);
+    startInterval(banners);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [banners]);
+
+  const pauseAndResume = () => {
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    if (resumeRef.current) clearTimeout(resumeRef.current);
+    resumeRef.current = setTimeout(() => startInterval(banners), RESUME_DELAY);
+  };
 
   const count = useCountUp(total, 1200, visible);
-  const prev = () => { setActive((i) => (i - 1 + banners.length) % banners.length); setPaused(true); };
-  const next = () => { setActive((i) => (i + 1) % banners.length); setPaused(true); };
+
+  const prev = () => {
+    setActive(i => (i - 1 + banners.length) % banners.length);
+    pauseAndResume();
+  };
+
+  const next = () => {
+    setActive(i => (i + 1) % banners.length);
+    pauseAndResume();
+  };
+
+  const goTo = (i: number) => {
+    setActive(i);
+    pauseAndResume();
+  };
 
   return (
     <section className="relative bg-[#080c14] text-white overflow-hidden">
 
-      {/* Banner Slider */}
       {banners.length > 0 && (
         <div
           className="relative w-full aspect-[16/7] md:aspect-[21/7] overflow-hidden"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
+          onMouseEnter={() => { if (intervalRef.current) clearInterval(intervalRef.current); }}
+          onMouseLeave={() => startInterval(banners)}
         >
           {banners.map((url, i) => (
             <div
@@ -84,19 +112,20 @@ export default function HeroSection({ total }: { total: number }) {
               <button onClick={next} className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white rounded-full p-2 transition-all">
                 <ChevronRight size={20} />
               </button>
-            </>
-          )}
 
-          {banners.length > 1 && (
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-              {banners.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => { setActive(i); setPaused(true); }}
-                  className={`rounded-full transition-all duration-300 ${i === active ? "w-6 h-2 bg-white" : "w-2 h-2 bg-white/40 hover:bg-white/70"}`}
-                />
-              ))}
-            </div>
+              {/* Progress bar */}
+              <div className="absolute bottom-0 left-0 right-0 z-20 flex gap-1 px-4 pb-3">
+                {banners.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goTo(i)}
+                    className="flex-1 h-1 rounded-full overflow-hidden bg-white/20"
+                  >
+                    <div className={`h-full bg-white rounded-full transition-all duration-300 ${i === active ? "w-full" : "w-0"}`} />
+                  </button>
+                ))}
+              </div>
+            </>
           )}
         </div>
       )}
