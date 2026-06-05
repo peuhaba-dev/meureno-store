@@ -16,7 +16,7 @@ export default function ScrollHeader() {
   return (
     <header className={`sticky top-0 z-30 transition-all duration-500 ${
       scrolled
-        ? "bg-[#080c14]/95 backdrop-blur-xl border-b border-white/5 shadow-xl shadow-black/30"
+        ? "bg-[#0d0f1a]/95 backdrop-blur-xl border-b border-indigo-500/10 shadow-xl shadow-indigo-900/20"
         : "bg-transparent"
     }`}>
       <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
