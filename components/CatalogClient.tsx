@@ -2,11 +2,14 @@
 
 import { useState, useMemo } from "react";
 import ProductCard from "@/components/ProductCard";
-import { Laptop } from "lucide-react";
+import { Laptop, ArrowUpDown } from "lucide-react";
 import type { Product } from "@/lib/api";
+
+type SortOption = "terbaru" | "harga-asc" | "harga-desc";
 
 export default function CatalogClient({ products, total }: { products: Product[]; total: number }) {
   const [activeBrand, setActiveBrand] = useState("Semua");
+  const [sort, setSort] = useState<SortOption>("terbaru");
 
   const brands = useMemo(() => {
     const set = new Set(products.map((p) => p.brand));
@@ -14,9 +17,20 @@ export default function CatalogClient({ products, total }: { products: Product[]
   }, [products]);
 
   const filtered = useMemo(() => {
-    if (activeBrand === "Semua") return products;
-    return products.filter((p) => p.brand === activeBrand);
-  }, [products, activeBrand]);
+    let list = activeBrand === "Semua" ? products : products.filter((p) => p.brand === activeBrand);
+
+    if (sort === "harga-asc") list = [...list].sort((a, b) => Number(a.price) - Number(b.price));
+    else if (sort === "harga-desc") list = [...list].sort((a, b) => Number(b.price) - Number(a.price));
+    else list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+
+    return list;
+  }, [products, activeBrand, sort]);
+
+  const sortLabels: Record<SortOption, string> = {
+    "terbaru": "Terbaru",
+    "harga-asc": "Harga Terendah",
+    "harga-desc": "Harga Tertinggi",
+  };
 
   return (
     <section className="max-w-5xl mx-auto px-4 py-10">
@@ -27,6 +41,24 @@ export default function CatalogClient({ products, total }: { products: Product[]
           <p className="text-sm text-gray-400 mt-0.5">
             {activeBrand === "Semua" ? `${total} unit tersedia` : `${filtered.length} unit ${activeBrand}`}
           </p>
+        </div>
+
+        {/* Sort dropdown */}
+        <div className="relative">
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 mb-1">
+            <ArrowUpDown size={12} />
+            <span>Urutkan</span>
+          </div>
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value as SortOption)}
+            className="appearance-none bg-white border border-gray-200 rounded-xl px-3 py-2 pr-8 text-sm font-semibold text-gray-700 cursor-pointer hover:border-blue-300 focus:outline-none focus:border-blue-500 transition-colors"
+          >
+            {(Object.keys(sortLabels) as SortOption[]).map((key) => (
+              <option key={key} value={key}>{sortLabels[key]}</option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute right-2.5 bottom-2.5 text-gray-400">▾</div>
         </div>
       </div>
 
