@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Product, formatPrice, getWhatsAppLink } from "@/lib/api";
+import { Product, formatPrice, getWhatsAppLink, getCldUrl } from "@/lib/api";
 import { MessageCircle, Monitor } from "lucide-react";
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -13,7 +13,7 @@ export default function ProductCard({ product }: { product: Product }) {
       <Link href={`/products/${product.slug}`} className="block relative aspect-[4/3] bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
         {primaryImage ? (
           <img
-            src={primaryImage.url}
+            src={getCldUrl(primaryImage.url, "w_600,h_450,c_fill,f_auto,q_auto")}
             alt={product.name}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />

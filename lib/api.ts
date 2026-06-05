@@ -73,3 +73,8 @@ export function getWhatsAppLink(product: Product): string {
   );
   return `https://wa.me/${phone}?text=${text}`;
 }
+
+export function getCldUrl(url: string, transforms: string): string {
+  if (!url || !url.includes("res.cloudinary.com")) return url;
+  return url.replace("/upload/", `/upload/${transforms}/`);
+}

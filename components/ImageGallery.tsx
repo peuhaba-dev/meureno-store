@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, Monitor } from "lucide-react";
+import { getCldUrl } from "@/lib/api";
 
 type Image = {
   id: number;
@@ -29,7 +30,7 @@ export default function ImageGallery({ images, productName }: { images: Image[];
       {/* Main image */}
       <div className="relative aspect-[4/3] bg-gray-50 overflow-hidden">
         <img
-          src={sorted[active].url}
+          src={getCldUrl(sorted[active].url, "w_900,h_675,c_fill,f_auto,q_auto")}
           alt={`${productName} ${active + 1}`}
           className="w-full h-full object-cover"
         />
@@ -65,7 +66,7 @@ export default function ImageGallery({ images, productName }: { images: Image[];
                 i === active ? "border-blue-500" : "border-transparent"
               }`}
             >
-              <img src={img.url} alt="" className="w-full h-full object-cover" />
+              <img src={getCldUrl(img.url, "w_120,h_120,c_fill,f_auto,q_auto")} alt="" className="w-full h-full object-cover" />
             </button>
           ))}
         </div>
