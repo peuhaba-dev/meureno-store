@@ -1,4 +1,5 @@
 import { getProducts } from "@/lib/api";
+import Link from "next/link";
 import { Laptop, Shield, Wrench, Star } from "lucide-react";
 import CatalogClient from "@/components/CatalogClient";
 
@@ -12,7 +13,7 @@ export default async function HomePage() {
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
+          <Link href="/" className="flex items-center gap-2.5">
             <div className="w-8 h-8 bg-blue-600 rounded-xl flex items-center justify-center">
               <Laptop className="text-white" size={16} />
             </div>
@@ -20,7 +21,7 @@ export default async function HomePage() {
               <span className="font-black text-gray-900 text-sm">Meureno Tech Store</span>
               <span className="hidden sm:inline text-xs text-gray-400 ml-2">Laptop Bekas Terpercaya</span>
             </div>
-          </div>
+          </Link>
           <a
             href="https://wa.me/628984125987"
             target="_blank"
