@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { Shield, Star, Wrench } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Shield, Star, Wrench, ChevronLeft, ChevronRight } from "lucide-react";
+
+const BANNERS = [
+  "https://res.cloudinary.com/dsimkszdo/image/upload/f_auto,q_auto/v1/store/banners/banner-1",
+  "https://res.cloudinary.com/dsimkszdo/image/upload/f_auto,q_auto/v1/store/banners/banner-2",
+  "https://res.cloudinary.com/dsimkszdo/image/upload/f_auto,q_auto/v1/store/banners/banner-3",
+];
 
 function useCountUp(target: number, duration: number = 1500, start: boolean = false) {
   const [count, setCount] = useState(0);
@@ -21,142 +27,107 @@ function useCountUp(target: number, duration: number = 1500, start: boolean = fa
 
 export default function HeroSection({ total }: { total: number }) {
   const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setVisible(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    if (paused) return;
+    const interval = setInterval(() => {
+      setActive((i) => (i + 1) % BANNERS.length);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [paused]);
+
   const count = useCountUp(total, 1200, visible);
 
-  const particles = [
-    { w: 3, h: 3, top: "15%", left: "10%", delay: "0s", dur: "4s" },
-    { w: 2, h: 2, top: "25%", left: "80%", delay: "0.5s", dur: "5s" },
-    { w: 4, h: 4, top: "60%", left: "5%", delay: "1s", dur: "6s" },
-    { w: 2, h: 2, top: "70%", left: "90%", delay: "1.5s", dur: "4.5s" },
-    { w: 3, h: 3, top: "40%", left: "70%", delay: "2s", dur: "5.5s" },
-    { w: 2, h: 2, top: "80%", left: "40%", delay: "0.8s", dur: "4s" },
-    { w: 3, h: 3, top: "10%", left: "55%", delay: "1.2s", dur: "6s" },
-    { w: 2, h: 2, top: "50%", left: "25%", delay: "2.5s", dur: "5s" },
-  ];
+  const prev = () => { setActive((i) => (i - 1 + BANNERS.length) % BANNERS.length); setPaused(true); };
+  const next = () => { setActive((i) => (i + 1) % BANNERS.length); setPaused(true); };
 
   return (
-    <section ref={ref} className="relative bg-[#080c14] text-white overflow-hidden">
-      {/* Animated gradient orbs */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div
-          className="absolute w-[600px] h-[600px] rounded-full opacity-20 blur-[100px]"
-          style={{
-            background: "radial-gradient(circle, #3b82f6, transparent)",
-            top: "-20%", left: "-10%",
-            animation: "orbMove1 8s ease-in-out infinite alternate",
-          }}
-        />
-        <div
-          className="absolute w-[400px] h-[400px] rounded-full opacity-15 blur-[80px]"
-          style={{
-            background: "radial-gradient(circle, #6366f1, transparent)",
-            bottom: "-10%", right: "5%",
-            animation: "orbMove2 10s ease-in-out infinite alternate",
-          }}
-        />
-        <div
-          className="absolute w-[300px] h-[300px] rounded-full opacity-10 blur-[60px]"
-          style={{
-            background: "radial-gradient(circle, #10b981, transparent)",
-            top: "30%", right: "30%",
-            animation: "orbMove3 12s ease-in-out infinite alternate",
-          }}
-        />
-      </div>
+    <section className="relative bg-[#080c14] text-white overflow-hidden">
 
-      {/* Grid pattern */}
+      {/* Banner Slider */}
       <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: "linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)",
-          backgroundSize: "50px 50px",
-        }}
-      />
+        className="relative w-full aspect-[16/7] md:aspect-[21/7] overflow-hidden"
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+      >
+        {BANNERS.map((url, i) => (
+          <div
+            key={i}
+            className="absolute inset-0 transition-opacity duration-700"
+            style={{ opacity: i === active ? 1 : 0, zIndex: i === active ? 1 : 0 }}
+          >
+            <img
+              src={url}
+              alt={`Banner ${i + 1}`}
+              className="w-full h-full object-cover"
+            />
+          </div>
+        ))}
 
-      {/* Floating particles */}
-      {particles.map((p, i) => (
-        <div
-          key={i}
-          className="absolute rounded-full bg-blue-400 opacity-30"
-          style={{
-            width: p.w, height: p.h,
-            top: p.top, left: p.left,
-            animation: `floatUp ${p.dur} ${p.delay} ease-in-out infinite alternate`,
-          }}
-        />
-      ))}
+        {/* Overlay gradient bawah */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#080c14]/60 via-transparent to-transparent z-10" />
 
-      {/* CSS animations */}
-      <style>{`
-        @keyframes orbMove1 {
-          from { transform: translate(0, 0) scale(1); }
-          to { transform: translate(60px, 40px) scale(1.15); }
-        }
-        @keyframes orbMove2 {
-          from { transform: translate(0, 0) scale(1); }
-          to { transform: translate(-50px, -30px) scale(1.1); }
-        }
-        @keyframes orbMove3 {
-          from { transform: translate(0, 0) scale(1); }
-          to { transform: translate(30px, -40px) scale(1.2); }
-        }
-        @keyframes floatUp {
-          from { transform: translateY(0px); opacity: 0.2; }
-          to { transform: translateY(-20px); opacity: 0.6; }
-        }
-        @keyframes fadeSlideUp {
-          from { opacity: 0; transform: translateY(24px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        .fade-up { animation: fadeSlideUp 0.7s ease forwards; }
-        .delay-1 { animation-delay: 0.1s; opacity: 0; }
-        .delay-2 { animation-delay: 0.25s; opacity: 0; }
-        .delay-3 { animation-delay: 0.4s; opacity: 0; }
-        .delay-4 { animation-delay: 0.55s; opacity: 0; }
-      `}</style>
+        {/* Nav arrows */}
+        {BANNERS.length > 1 && (
+          <>
+            <button
+              onClick={prev}
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white rounded-full p-2 transition-all"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={next}
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-20 bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white rounded-full p-2 transition-all"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </>
+        )}
 
-      <div className="relative max-w-5xl mx-auto px-4 py-20 md:py-28 text-center">
-        {/* Badge */}
-        <div className={`inline-flex items-center gap-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-4 py-1.5 text-xs font-semibold text-blue-300 mb-8 fade-up delay-1`}>
-          <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
-          <span className="tabular-nums">{count}</span> Unit Tersedia Sekarang
-        </div>
-
-        {/* Heading */}
-        <h1 className="text-4xl md:text-6xl font-black mb-5 leading-tight tracking-tight fade-up delay-2">
-          Laptop Second
-          <br />
-          <span className="bg-gradient-to-r from-blue-400 via-indigo-400 to-blue-500 bg-clip-text text-transparent">
-            Berkualitas Tinggi
-          </span>
-        </h1>
-
-        {/* Sub */}
-        <p className="text-slate-400 text-lg mb-10 max-w-md mx-auto leading-relaxed fade-up delay-3">
-          Pilihan laptop grade A terpercaya dengan garansi resmi di Banda Aceh
-        </p>
-
-        {/* Trust badges */}
-        <div className="flex flex-wrap items-center justify-center gap-3 fade-up delay-4">
-          {[
-            { icon: Shield, color: "text-emerald-400", text: "Garansi SSD 1 Tahun" },
-            { icon: Star, color: "text-yellow-400", text: "Grade A Certified" },
-            { icon: Wrench, color: "text-blue-400", text: "Servis & Garansi Unit" },
-          ].map(({ icon: Icon, color, text }) => (
-            <div key={text} className="flex items-center gap-2 bg-white/5 hover:bg-white/10 transition-colors backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2.5">
-              <Icon size={15} className={color} />
-              <span className="text-slate-200 text-sm font-medium">{text}</span>
-            </div>
+        {/* Dot indicators */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+          {BANNERS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => { setActive(i); setPaused(true); }}
+              className={`rounded-full transition-all duration-300 ${
+                i === active ? "w-6 h-2 bg-white" : "w-2 h-2 bg-white/40 hover:bg-white/70"
+              }`}
+            />
           ))}
         </div>
       </div>
+
+      {/* Trust bar */}
+      <div className="relative bg-[#0d1018] border-t border-white/5">
+        <div className="max-w-5xl mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-xs text-blue-300 font-semibold">
+            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+            <span className="tabular-nums">{count}</span> Unit Tersedia
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {[
+              { icon: Shield, color: "text-emerald-400", text: "Garansi SSD 1 Tahun" },
+              { icon: Star, color: "text-yellow-400", text: "Grade A Certified" },
+              { icon: Wrench, color: "text-blue-400", text: "Servis & Garansi Unit" },
+            ].map(({ icon: Icon, color, text }) => (
+              <div key={text} className="flex items-center gap-1.5">
+                <Icon size={13} className={color} />
+                <span className="text-xs text-gray-400 font-medium">{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
     </section>
   );
 }
