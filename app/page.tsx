@@ -16,6 +16,8 @@ export default async function HomePage() {
 
       <HeroSection total={total} />
 
+      <CatalogClient products={products} total={total} />
+
 
       {/* Trust Section */}
       <section className="bg-[#0d0f1a] border-y border-white/5">
@@ -61,8 +63,6 @@ export default async function HomePage() {
         </div>
 
       </section>
-
-      <CatalogClient products={products} total={total} />
 
       {/* Footer */}
       <footer className="border-t border-white/5 bg-[#0a0c12] py-12 mt-6">

@@ -3,17 +3,32 @@
 import { useState, useMemo, useEffect } from "react";
 import ProductCard from "@/components/ProductCard";
 import SkeletonCard from "@/components/SkeletonCard";
-import { Laptop, ArrowUpDown } from "lucide-react";
+import { Laptop, ArrowUpDown, ChevronDown } from "lucide-react";
 import type { Product } from "@/lib/api";
 
 type SortOption = "terbaru" | "harga-asc" | "harga-desc";
+const MOBILE_INITIAL = 6;
+const MOBILE_LOAD_MORE = 6;
 
 export default function CatalogClient({ products, total }: { products: Product[]; total: number }) {
   const [activeBrand, setActiveBrand] = useState("Semua");
   const [sort, setSort] = useState<SortOption>("terbaru");
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(MOBILE_INITIAL);
 
-  useEffect(() => { setMounted(true); }, []);
+  useEffect(() => {
+    setMounted(true);
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Reset visible count saat filter/sort berubah
+  useEffect(() => {
+    setVisibleCount(MOBILE_INITIAL);
+  }, [activeBrand, sort]);
 
   const brandCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -33,6 +48,9 @@ export default function CatalogClient({ products, total }: { products: Product[]
     else list = [...list].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return list;
   }, [products, activeBrand, sort]);
+
+  const displayed = isMobile ? filtered.slice(0, visibleCount) : filtered;
+  const hasMore = isMobile && visibleCount < filtered.length;
 
   const sortLabels: Record<SortOption, string> = {
     "terbaru": "Terbaru",
@@ -105,11 +123,32 @@ export default function CatalogClient({ products, total }: { products: Product[]
           <p className="text-gray-500">Tidak ada produk untuk brand ini.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-          {filtered.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+            {displayed.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+
+          {/* Load More — mobile only */}
+          {hasMore && (
+            <div className="mt-8 text-center">
+              <button
+                onClick={() => setVisibleCount(v => v + MOBILE_LOAD_MORE)}
+                className="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-blue-500/30 text-gray-300 hover:text-white font-semibold px-6 py-3 rounded-2xl transition-all duration-200 active:scale-[0.97]"
+              >
+                <ChevronDown size={16} />
+                Lihat Lebih Banyak
+                <span className="text-xs text-gray-500">({filtered.length - visibleCount} lagi)</span>
+              </button>
+            </div>
+          )}
+
+          {/* Semua sudah tampil — mobile */}
+          {isMobile && !hasMore && filtered.length > MOBILE_INITIAL && (
+            <p className="text-center text-xs text-gray-600 mt-6">Semua {filtered.length} laptop sudah ditampilkan</p>
+          )}
+        </>
       )}
     </section>
   );
