@@ -2,12 +2,19 @@
 
 import Link from "next/link";
 import { Product, formatPrice, getWhatsAppLink, getCldUrl } from "@/lib/api";
-import { MessageCircle, Monitor, Cpu, HardDrive } from "lucide-react";
+import { MessageCircle, Monitor, Cpu, HardDrive, MemoryStick, Maximize2 } from "lucide-react";
 
 export default function ProductCard({ product }: { product: Product }) {
   const primaryImage = product.images?.find((i) => i.isPrimary) || product.images?.[0];
   const waLink = getWhatsAppLink(product);
   const isSold = product.status === "SOLD";
+
+  const specs = [
+    product.processor && { icon: Cpu, label: product.processor },
+    product.ramGb && { icon: MemoryStick, label: `RAM ${product.ramGb}GB` },
+    product.storageGb && { icon: HardDrive, label: `SSD ${product.storageGb}GB` },
+    product.screenInch && { icon: Maximize2, label: `${product.screenInch}"` },
+  ].filter(Boolean) as { icon: any; label: string }[];
 
   return (
     <div className={`group relative bg-[#16181f] rounded-2xl overflow-hidden border border-white/5 hover:border-blue-500/30 hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 flex flex-col ${isSold ? "opacity-50" : ""}`}>
@@ -26,10 +33,8 @@ export default function ProductCard({ product }: { product: Product }) {
           </div>
         )}
 
-        {/* Gradient overlay bawah */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#16181f]/80 via-transparent to-transparent" />
 
-        {/* Badge kondisi */}
         <div className="absolute top-3 left-3">
           <span className="text-[10px] font-bold bg-white/10 backdrop-blur-sm text-emerald-400 border border-emerald-500/20 px-2.5 py-1 rounded-full">
             ✓ {product.condition}
@@ -53,28 +58,19 @@ export default function ProductCard({ product }: { product: Product }) {
 
         {/* Nama */}
         <Link href={`/products/${product.slug}`}>
-          <h3 className="font-bold text-white hover:text-blue-300 transition-colors line-clamp-2 mb-3 leading-snug text-sm">
+          <h3 className="font-bold text-white hover:text-blue-300 transition-colors line-clamp-2 mb-4 leading-snug text-sm">
             {product.name}
           </h3>
         </Link>
 
-        {/* Spec chips */}
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {product.ramGb && (
-            <span className="text-[10px] bg-white/5 text-gray-400 border border-white/5 px-2 py-0.5 rounded-md font-medium">
-              RAM {product.ramGb}GB
-            </span>
-          )}
-          {product.storageGb && (
-            <span className="text-[10px] bg-white/5 text-gray-400 border border-white/5 px-2 py-0.5 rounded-md font-medium">
-              SSD {product.storageGb}GB
-            </span>
-          )}
-          {product.screenInch && (
-            <span className="text-[10px] bg-white/5 text-gray-400 border border-white/5 px-2 py-0.5 rounded-md font-medium">
-              {product.screenInch}"
-            </span>
-          )}
+        {/* Specs dengan icon */}
+        <div className="grid grid-cols-2 gap-1.5 mb-4">
+          {specs.map(({ icon: Icon, label }, i) => (
+            <div key={i} className="flex items-center gap-1.5 bg-white/[0.03] border border-white/5 rounded-lg px-2 py-1.5">
+              <Icon size={11} className="text-blue-400/60 shrink-0" />
+              <span className="text-[10px] text-gray-400 font-medium truncate">{label}</span>
+            </div>
+          ))}
         </div>
 
         {/* Harga + tombol */}

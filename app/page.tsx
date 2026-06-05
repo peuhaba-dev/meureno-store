@@ -1,6 +1,7 @@
 import { getProducts } from "@/lib/api";
 import Link from "next/link";
 import { Laptop, MessageCircle, Shield, Star } from "lucide-react";
+import ScrollHeader from "@/components/ScrollHeader";
 import CatalogClient from "@/components/CatalogClient";
 import HeroSection from "@/components/HeroSection";
 
@@ -11,29 +12,7 @@ export default async function HomePage() {
 
   return (
     <main className="min-h-screen bg-[#0f1117]">
-      {/* Header */}
-      <header className="bg-[#0f1117]/90 backdrop-blur-md border-b border-white/5 sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div className="w-8 h-8 bg-blue-600 group-hover:bg-blue-500 transition-colors rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-              <Laptop className="text-white" size={16} />
-            </div>
-            <div>
-              <span className="font-black text-white text-sm tracking-tight">Meureno Tech Store</span>
-              <span className="hidden sm:inline text-xs text-gray-500 ml-2">Laptop Bekas Terpercaya</span>
-            </div>
-          </Link>
-          <a
-            href="https://wa.me/628984125987"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 active:scale-[0.97] text-white text-sm px-4 py-2 rounded-xl font-bold transition-all shadow-lg shadow-emerald-500/20"
-          >
-            <MessageCircle size={15} />
-            <span>Hubungi Kami</span>
-          </a>
-        </div>
-      </header>
+      <ScrollHeader />
 
       <HeroSection total={total} />
 

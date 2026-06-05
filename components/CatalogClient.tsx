@@ -15,6 +15,12 @@ export default function CatalogClient({ products, total }: { products: Product[]
 
   useEffect(() => { setMounted(true); }, []);
 
+  const brandCounts = useMemo(() => {
+    const counts: Record<string, number> = {};
+    products.forEach((p) => { counts[p.brand] = (counts[p.brand] || 0) + 1; });
+    return counts;
+  }, [products]);
+
   const brands = useMemo(() => {
     const set = new Set(products.map((p) => p.brand));
     return ["Semua", ...Array.from(set).sort()];
@@ -66,19 +72,27 @@ export default function CatalogClient({ products, total }: { products: Product[]
 
       {/* Filter Brand */}
       <div className="flex flex-wrap gap-2 mb-8">
-        {brands.map((brand) => (
-          <button
-            key={brand}
-            onClick={() => setActiveBrand(brand)}
-            className={`px-4 py-1.5 rounded-full text-sm font-bold border transition-all duration-200 ${
-              activeBrand === brand
-                ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20"
-                : "bg-white/5 text-gray-400 border-white/10 hover:border-blue-500/30 hover:text-blue-300"
-            }`}
-          >
-            {brand}
-          </button>
-        ))}
+        {brands.map((brand) => {
+          const count = brand === "Semua" ? products.length : (brandCounts[brand] || 0);
+          return (
+            <button
+              key={brand}
+              onClick={() => setActiveBrand(brand)}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-sm font-bold border transition-all duration-200 ${
+                activeBrand === brand
+                  ? "bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-500/20"
+                  : "bg-white/5 text-gray-400 border-white/10 hover:border-blue-500/30 hover:text-blue-300"
+              }`}
+            >
+              {brand}
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded-full ${
+                activeBrand === brand ? "bg-white/20 text-white" : "bg-white/5 text-gray-500"
+              }`}>
+                {count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {!mounted ? (
