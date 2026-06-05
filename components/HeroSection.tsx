@@ -88,7 +88,7 @@ export default function HeroSection({ total }: { total: number }) {
 
       {banners.length > 0 && (
         <div
-          className="relative w-full aspect-[4/3] sm:aspect-[16/7] md:aspect-[21/7] overflow-hidden"
+          className="relative w-full aspect-[16/7] md:aspect-[21/7] overflow-hidden"
           onMouseEnter={() => { if (intervalRef.current) clearInterval(intervalRef.current); }}
           onMouseLeave={() => startInterval(banners)}
         >
@@ -98,7 +98,7 @@ export default function HeroSection({ total }: { total: number }) {
               className="absolute inset-0 transition-opacity duration-700"
               style={{ opacity: i === active ? 1 : 0, zIndex: i === active ? 1 : 0 }}
             >
-              <img src={url} alt={`Banner ${i + 1}`} className="w-full h-full object-cover object-center" />
+              <img src={url} alt={`Banner ${i + 1}`} className="w-full h-full object-contain md:object-cover bg-[#080c14]" />
             </div>
           ))}
 
