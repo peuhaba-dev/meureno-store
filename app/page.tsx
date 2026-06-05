@@ -2,6 +2,7 @@ import { getProducts } from "@/lib/api";
 import Link from "next/link";
 import { Laptop, Shield, Wrench, Star } from "lucide-react";
 import CatalogClient from "@/components/CatalogClient";
+import HeroSection from "@/components/HeroSection";
 
 export const revalidate = 60;
 
@@ -34,45 +35,7 @@ export default async function HomePage() {
         </div>
       </header>
 
-      {/* Hero */}
-      <section className="relative bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white overflow-hidden">
-        {/* Grid pattern */}
-        <div className="absolute inset-0 opacity-10"
-          style={{backgroundImage: "linear-gradient(rgba(255,255,255,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.1) 1px, transparent 1px)", backgroundSize: "40px 40px"}}>
-        </div>
-        {/* Glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-64 bg-blue-500 opacity-20 blur-3xl rounded-full"></div>
-
-        <div className="relative max-w-5xl mx-auto px-4 py-16 text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 text-xs font-semibold text-blue-200 mb-6">
-            <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
-            {total} Unit Tersedia Sekarang
-          </div>
-          <h1 className="text-4xl md:text-5xl font-black mb-4 leading-tight">
-            Laptop Second<br />
-            <span className="text-blue-400">Berkualitas Tinggi</span>
-          </h1>
-          <p className="text-slate-300 text-lg mb-8 max-w-md mx-auto">
-            Pilihan laptop grade A terpercaya dengan garansi resmi di Banda Aceh
-          </p>
-
-          {/* Trust badges */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm">
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2">
-              <Shield size={16} className="text-emerald-400" />
-              <span className="text-slate-200 font-medium">Garansi SSD 1 Tahun</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2">
-              <Star size={16} className="text-yellow-400" />
-              <span className="text-slate-200 font-medium">Grade A Certified</span>
-            </div>
-            <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2">
-              <Wrench size={16} className="text-blue-400" />
-              <span className="text-slate-200 font-medium">Servis & Garansi Unit</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      <HeroSection total={total} />
 
       {/* Katalog */}
       <CatalogClient products={products} total={total} />
