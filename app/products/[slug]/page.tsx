@@ -2,6 +2,7 @@ import { getProduct, formatPrice, getWhatsAppLink } from "@/lib/api";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { MessageCircle, ArrowLeft, Shield, HardDrive, Monitor, Cpu } from "lucide-react";
+import ImageGallery from "@/components/ImageGallery";
 
 export const revalidate = 60;
 
@@ -35,7 +36,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
     notFound();
   }
 
-  const primaryImage = product.images?.find((i) => i.isPrimary) || product.images?.[0];
+
   const waLink = getWhatsAppLink(product);
 
   return (
@@ -54,18 +55,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
           <div className="md:flex">
             {/* Gambar */}
-            <div className="md:w-1/2 aspect-[4/3] bg-gray-50">
-              {primaryImage ? (
-                <img
-                  src={primaryImage.url}
-                  alt={product.name}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-300">
-                  <Monitor size={64} />
-                </div>
-              )}
+            <div className="md:w-1/2">
+              <ImageGallery images={product.images || []} productName={product.name} />
             </div>
 
             {/* Info */}
