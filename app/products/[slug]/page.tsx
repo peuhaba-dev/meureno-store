@@ -1,8 +1,9 @@
 import { getProduct, formatPrice, getWhatsAppLink } from "@/lib/api";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { MessageCircle, ArrowLeft, Shield, HardDrive, Monitor, Cpu, Battery, Tag } from "lucide-react";
+import { ArrowLeft, Shield, Cpu, HardDrive, Monitor, MessageCircle } from "lucide-react";
 import ImageGallery from "@/components/ImageGallery";
+import ShareButtons from "@/components/ShareButtons";
 
 export const revalidate = 60;
 
@@ -61,12 +62,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       </header>
 
       <div className="max-w-5xl mx-auto px-4 py-8 md:py-12">
-
-        {/* Main card */}
         <div className="bg-[#16181f] rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
           <div className="md:grid md:grid-cols-2">
 
-            {/* Gambar — dark bg */}
+            {/* Gambar */}
             <div className="bg-[#0f1117]">
               <ImageGallery images={product.images || []} productName={product.name} />
             </div>
@@ -120,7 +119,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               </div>
 
               {/* CTA */}
-              <div className="mt-auto">
+              <div className="mt-auto space-y-3">
                 {isAvailable ? (
                   <a
                     href={waLink}
@@ -136,7 +135,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                     Produk Sudah Terjual
                   </div>
                 )}
-                <p className="text-center text-xs text-gray-600 mt-3">
+
+                {/* Share buttons */}
+                <ShareButtons productName={product.name} price={formatPrice(product.price)} />
+
+                <p className="text-center text-xs text-gray-600">
                   Respon cepat · Harga nego · Bergaransi
                 </p>
               </div>
@@ -152,13 +155,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           )}
         </div>
 
-        {/* Back link */}
         <div className="mt-6 text-center">
           <Link href="/" className="text-sm text-gray-600 hover:text-gray-300 transition-colors">
             ← Lihat semua laptop
           </Link>
         </div>
-
       </div>
     </main>
   );
